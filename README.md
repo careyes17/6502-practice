@@ -15,4 +15,9 @@ A collection of micro-projects dedicated to learning 6502 assembly language and 
 5. Use the `.bin` file in your Atari 2600 emulator of choice
 
 ## Reading Material
-https://www.randomterrain.com/atari-2600-memories-tutorial-andrew-davie-01.html
+
+[Learn 6502 Assembly Language](https://skilldrick.github.io/easy6502/)
+> An interactive introduction to assembly language using 6502 assembly.
+
+[6502 Assembly Language and Atari 2600 Development Tutorial Series](https://www.randomterrain.com/atari-2600-memories-tutorial-andrew-davie-01.html)
+> This is a comprehensive, beginner friendly tutorial for 6502 Assembly Language Atari 2600 development.
