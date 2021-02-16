@@ -37,6 +37,10 @@ Clear
 
     ldy #0                 ; "speed" counter
 
+    ; set playfield reflected across y-axis, using D0 = 1
+    lda #%00000001
+    sta CTRLPF
+
 
 
 StartOfFrame
