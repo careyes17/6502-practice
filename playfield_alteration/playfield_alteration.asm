@@ -63,7 +63,6 @@ StartOfFrame
 
 
     lda #0
-
     sta VSYNC           
 
 
@@ -71,12 +70,10 @@ StartOfFrame
 
     ldx #0
 
-VerticalBlank   sta WSYNC
-
+VerticalBlank
+    sta WSYNC
     inx
-
     cpx #37
-
     bne VerticalBlank
 
 
@@ -94,7 +91,6 @@ IteratePattern
 notyet
 
                 lda PATTERN            ; use our saved pattern
-                sta PF1                ; as the playfield shape
 
 
 
@@ -104,13 +100,13 @@ notyet
 
 scanlines
     sta WSYNC
+    sta PF1 ; start displaying playfield shape
     stx COLUBK             ; change background color (rainbow effect)
     dex
     bne scanlines
 
 
     ; reset background color to black
-    sta WSYNC
     ldx #0
     stx COLUBK
 
