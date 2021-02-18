@@ -3,21 +3,13 @@
     include "../../lib/vcs.asm"
     include "../../lib/macro.asm"
 
-
-
-
-PATTERN         = $80                  ; storage location (1st byte in RAM)
-TIMETOCHANGE    = 20                   ; speed of "animation" - change as desired
-
-
-
+    ; rom code start
     SEG
     ORG $F000
 
-
 INIT
 
-; clearing ram and TIA
+    ; clearing ram and TIA
 Reset
     ldx #0 
     lda #0 
@@ -26,118 +18,111 @@ Clear
     inx 
     bne Clear
 
+    ;init stack
+    ldx #$FF
+    txs
+
     ;init values
 
+    ; set the playfield color
     lda #$45
-    sta COLUPF ; set the playfield color
+    sta COLUPF
 
     ; set playfield reflected across y-axis, using D0 = 1
     lda #%00000001
     sta CTRLPF
 
+    ; init player colors
     lda #$56
     sta COLUP0
     lda #$67
     sta COLUP1
 
+START
 
-
-StartOfFrame
-
-   ; Start of vertical blank processing
+    ; Start of vertical blank processing
     lda #0
     sta VBLANK
-
-
 
     lda #2
     sta VSYNC
 
-
-
+    ; 3 scanlines of VSYNC signal
     sta WSYNC
     sta WSYNC
-    sta WSYNC               ; 3 scanlines of VSYNC signal
-
-
+    sta WSYNC
 
     lda #0
-
     sta VSYNC           
 
 
-; 37 scanlines of vertical blank...
+    ; 37 scanlines of vertical blank...
 
     ldx #0
-
-VerticalBlank   sta WSYNC
-
+VerticalBlank
+    sta WSYNC
     inx
-
     cpx #37
-
     bne VerticalBlank
 
 
-; Do 192 scanlines of color-changing (our picture)
- 
-                ldx #0 ; 192 scanlines of picture...
+    ; Do 192 scanlines of color-changing (our picture)
+    ; 8 (top) + 176 (middle) + 8 (bottom) = 192 lines
+    
+    ldx #0 ; 192 scanlines of picture...
 
-                ; setting playfield values
-                lda #%11111111
-                sta PF0
-                sta PF1
-                sta PF2
+    ; setting playfield values
+    lda #%11111111
+    sta PF0
+    sta PF1
+    sta PF2
 Top8Lines
-                sta WSYNC
-                stx COLUBK
-                inx
-                cpx #8
-                bne Top8Lines
+    sta WSYNC
+    stx COLUBK
+    inx
+    cpx #8
+    bne Top8Lines
 
 
-
-                ; 8 (top) + 176 (middle) + 8 (bottom) = 192 lines
-                ; middle scanlines
-                lda #%00010000 ; PF0 is mirrored <--- direction, low 4 bits ignored
-                sta PF0
-                lda #0
-                sta PF1
-                sta PF2
+    ; middle scanlines
+    lda #%00010000 ; PF0 is mirrored <--- direction, low 4 bits ignored
+    sta PF0
+    lda #0
+    sta PF1
+    sta PF2
 MiddleLines     
-                sta WSYNC
-                stx COLUBK
+    sta WSYNC
+    stx COLUBK
 
-                
-                ; draw two sprites on the playfield
-                SLEEP 20
-                sta RESP0
-                SLEEP 20
-                sta RESP1
-                stx GRP0 ; modify sprite 0 shape
-                stx GRP1 ; modify sprite 1 shape
+    ; draw two sprites on the playfield
+    SLEEP 20
+    sta RESP0
+    SLEEP 20
+    sta RESP1
+    stx GRP0 ; modify sprite 0 shape
+    stx GRP1 ; modify sprite 1 shape
+
+    inx
+    cpx #184
+    bne MiddleLines
+
+    ; sprite cleanup
+    lda #0
+    sta GRP0 ; modify sprite 0 shape
+    sta GRP1 ; modify sprite 1 shape
 
 
-                inx
-                cpx #184
-                bne MiddleLines
-
-                ; sprite cleanup
-                lda #0
-                sta GRP0 ; modify sprite 0 shape
-                sta GRP1 ; modify sprite 1 shape
-
-                ; bottom 8 scanlines
-                lda #%11111111
-                sta PF0
-                sta PF1
-                sta PF2
+    ; bottom 8 scanlines
+    lda #%11111111
+    sta PF0
+    sta PF1
+    sta PF2
 Bottom8Lines
-                sta WSYNC
-                stx COLUBK
-                inx
-                cpx #192
-                bne Bottom8Lines
+    sta WSYNC
+    stx COLUBK
+    inx
+    cpx #192
+    bne Bottom8Lines
 
     ; reset background color to black
     ldx #0
@@ -150,31 +135,26 @@ Bottom8Lines
     sta PF2
 
 
-
-; Overscan blanking
-                lda #%01000010
-                sta VBLANK          ; end of screen - enter blanking
-
+    ; Overscan blanking
+    lda #%01000010
+    sta VBLANK ; end of screen - enter blanking
 
 
    ; 30 scanlines of overscan...
-
-
-
-                ldx #0
+    ldx #0
 Overscan        
-                sta WSYNC
-                inx
-                cpx #30
-                bne Overscan
+    sta WSYNC
+    inx
+    cpx #30
+    bne Overscan
 
-                jmp StartOfFrame
+    jmp START
 
+    ;interupt vectors
 
-
-            ORG $FFFA
+    ORG $FFFA
 InterruptVectors
-            .word Reset          ; NMI
-            .word Reset          ; RESET
-            .word Reset          ; IRQ
+    .word Reset          ; NMI
+    .word Reset          ; RESET
+    .word Reset          ; IRQ
 END
