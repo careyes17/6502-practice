@@ -45,7 +45,7 @@ vblankscanlines
     bne vblankscanlines
 
 
-; middle 192 scanlines
+    ; middle 192 scanlines
     ldy #192 ; 192 scanlines of picture...
     ldx #20 ; just for color variation
 scanlines
@@ -98,11 +98,10 @@ overscanlines
 
     jmp START ; start main loop again
 
-; interupt vectors
+    ; interupt vectors
     ORG $FFFA
 InterruptVectors
     .word START ; NMI
     .word START ; RESET
     .word START ; IRQ
-
 END
