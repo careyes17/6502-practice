@@ -59,7 +59,7 @@ Overscan
 
     jmp START
 
-    ;interup vectors
+    ;interupt vectors
 
     ORG $FFFA
 InterruptVectors

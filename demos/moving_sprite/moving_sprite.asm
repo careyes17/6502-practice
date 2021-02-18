@@ -199,7 +199,7 @@ SimpleLoop
     sta RESP0			; start drawing the sprite
     rts
 
-;interup vectors
+;interupt vectors
 
     ORG $FFFA
 InterruptVectors
