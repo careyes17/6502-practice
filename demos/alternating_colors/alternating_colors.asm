@@ -101,7 +101,7 @@ overscanlines
     ; interupt vectors
     ORG $FFFA
 InterruptVectors
-    .word START ; NMI
-    .word START ; RESET
-    .word START ; IRQ
+    .word Reset ; NMI
+    .word Reset ; RESET
+    .word Reset ; IRQ
 END
