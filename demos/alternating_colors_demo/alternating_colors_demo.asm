@@ -1,17 +1,28 @@
     processor 6502
     include "../../lib/vcs.asm"
     include "../../lib/macro.asm"
+
+    ; rom code start
     SEG
     ORG $F000
 
-start
-    jsr drawtop
-    jsr drawgame
-    jsr drawbottom
-    jmp start
+INIT
 
-drawtop:
-vblank
+    ; clearing ram and TIA
+Reset
+    ldx #0 
+    lda #0 
+Clear           
+    sta 0,x 
+    inx 
+    bne Clear
+
+    ;init stack
+    ldx #$FF
+    txs
+
+START
+
     ; Start of vertical blank processing
     lda #0
     sta VBLANK
@@ -19,75 +30,62 @@ vblank
     lda #2
     sta VSYNC
 
-    
-vsynch
     ; 3 scanlines of VSYNCH signal...
     sta WSYNC
     sta WSYNC
     sta WSYNC
 
-
-
     lda #0
     sta VSYNC
 
     ldy #37 ; 37 scanlines of vertical blank...
-
 vblankscanlines
     sta WSYNC
     dey
     bne vblankscanlines
 
-    rts
 
-
-drawgame:
+; middle 192 scanlines
     ldy #192 ; 192 scanlines of picture...
     ldx #20 ; just for color variation
-
 scanlines
     sta WSYNC
-    nop
-    nop
-    nop
+    SLEEP 3
     iny
     sty COLUBK
     dey
-    nop
-    nop
-    nop
+    SLEEP 3
     dex
     stx COLUBK
-    nop
-    nop
-    nop
+    SLEEP 3
     iny
     sty COLUBK
     dey
-    nop
-    nop
-    nop
+    SLEEP 3
     stx COLUBK
-    nop
-    nop
-    nop
+    SLEEP 3
     iny
     sty COLUBK
     dey
-    nop
+    SLEEP 3
+    stx COLUBK
+    SLEEP 3
+    iny
+    sty COLUBK
+    dey
+    SLEEP 3
     stx COLUBK
     dey
     bne scanlines
 
 
     sta WSYNC
+    ; reset background color to black
     ldx #0
     stx COLUBK
 
-    rts
 
-drawbottom:
-overscan
+    ; overscan start
     lda #%01000010
     sta VBLANK ; end of screen - enter blanking
 
@@ -98,12 +96,13 @@ overscanlines
     dey
     bne overscanlines
 
-    rts
+    jmp START ; start main loop again
 
+; interupt vectors
     ORG $FFFA
-    
-    .word start ; NMI
-    .word start ; RESET
-    .word start ; IRQ
+InterruptVectors
+    .word START ; NMI
+    .word START ; RESET
+    .word START ; IRQ
 
-end
+END
