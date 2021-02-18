@@ -1,4 +1,4 @@
-; MACRO.H
+; MACRO.asm
 ; Version 1.06, 3/SEPTEMBER/2004
 
 VERSION_MACRO         = 106

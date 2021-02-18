@@ -1,4 +1,4 @@
-; VCS.H
+; VCS.asm
 ; Version 1.05, 13/November/2003
 
 VERSION_VCS         = 105

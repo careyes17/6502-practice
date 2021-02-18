@@ -1,6 +1,6 @@
     processor 6502
-    include "vcs.h"
-    include "macro.h"
+    include "vcs.asm"
+    include "macro.asm"
     SEG
     ORG $F000
 
