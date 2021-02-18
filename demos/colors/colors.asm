@@ -7,7 +7,7 @@
     SEG
     ORG $F000
 
-start
+START
 
     ; Start of vertical blank processing
     lda #0
@@ -57,13 +57,13 @@ Overscan
     cpx #30
     bne Overscan
 
-    jmp start
+    jmp START
 
     ;interup vectors
 
     ORG $FFFA
 InterruptVectors
-    .word start          ; NMI
-    .word start          ; RESET
-    .word start          ; IRQ
+    .word START          ; NMI
+    .word START          ; RESET
+    .word START          ; IRQ
 END
