@@ -1,8 +1,16 @@
     processor 6502
-    include "vcs.asm"
-    include "macro.asm"
+    include "../../lib/vcs.asm"
+    include "../../lib/macro.asm"
     SEG
     ORG $F000
+
+INIT:
+    ldx #0
+    lda #0
+Clear
+    sta 0,x
+    inx
+    bne Clear
 
 start
     jsr drawtop

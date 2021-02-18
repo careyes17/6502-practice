@@ -1,7 +1,7 @@
 
     processor 6502
-    include "vcs.asm"
-    include "macro.asm"
+    include "../../lib/vcs.asm"
+    include "../../lib/macro.asm"
 
 
 
@@ -28,10 +28,14 @@ Clear
 
 
 
-    ;init values
+    ; init values
+    lda #0
+    sta PATTERN            ; The binary PF 'pattern'
 
     lda #$45
-    sta COLUPF ; set the playfield color
+    sta COLUPF             ; set the playfield color
+
+    ldy #0                 ; "speed" counter
 
     ; set playfield reflected across y-axis, using D0 = 1
     lda #%00000001
@@ -59,7 +63,6 @@ StartOfFrame
 
 
     lda #0
-
     sta VSYNC           
 
 
@@ -67,62 +70,41 @@ StartOfFrame
 
     ldx #0
 
-VerticalBlank   sta WSYNC
-
+VerticalBlank
+    sta WSYNC
     inx
-
     cpx #37
-
     bne VerticalBlank
+
+
+IteratePattern
+        ; Handle a change in the pattern once every 20 frames
+        ; and write the pattern to the PF1 register
+
+                iny                    ; increment speed count by one
+                cpy #TIMETOCHANGE      ; has it reached our "change point"?
+                bne notyet             ; no, so branch past
+
+                ldy #0                 ; reset speed count
+                inc PATTERN            ; switch to next pattern
+
+notyet
+
+                lda PATTERN            ; use our saved pattern
+
 
 
 ; Do 192 scanlines of color-changing (our picture)
  
-                ldx #0 ; 192 scanlines of picture...
+    ldx #192 ; 192 scanlines of picture...
 
+scanlines
+    sta WSYNC
+    sta PF1 ; start displaying playfield shape
+    stx COLUBK             ; change background color (rainbow effect)
+    dex
+    bne scanlines
 
-
-                ; setting playfield values
-                lda #%11111111
-                sta PF0
-                sta PF1
-                sta PF2
-Top8Lines
-                sta WSYNC
-                stx COLUBK
-                inx
-                cpx #8
-                bne Top8Lines
-
-
-
-                ; 8 (top) + 176 (middle) + 8 (bottom) = 192 lines
-                ; middle scanlines
-                lda #%00010000 ; PF0 is mirrored <--- direction, low 4 bits ignored
-                sta PF0
-                lda #0
-                sta PF1
-                sta PF2
-MiddleLines     
-                sta WSYNC
-                stx COLUBK
-                inx
-                cpx #184
-                bne MiddleLines
-
-
-
-                ; bottom 8 scanlines
-                lda #%11111111
-                sta PF0
-                sta PF1
-                sta PF2
-Bottom8Lines
-                sta WSYNC
-                stx COLUBK
-                inx
-                cpx #192
-                bne Bottom8Lines
 
     ; reset background color to black
     ldx #0
@@ -130,10 +112,7 @@ Bottom8Lines
 
     ; prevent playfield from going above 192 scanlines
     lda #0
-    sta PF0
     sta PF1
-    sta PF2
-
 
 
 ; Overscan blanking
@@ -155,9 +134,9 @@ Overscan
 
                 jmp StartOfFrame
 
-
-
             ORG $FFFA
+
+
 InterruptVectors
             .word Reset          ; NMI
             .word Reset          ; RESET

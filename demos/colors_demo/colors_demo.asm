@@ -4,9 +4,8 @@ StartOfFrame
 
             processor 6502
 
-            include "vcs.asm"
-
-            include "macro.asm"
+            include "../../lib/vcs.asm"
+            include "../../lib/macro.asm"
 
 
 
@@ -160,15 +159,13 @@ StartOfFrame
 
                 REPEND
 
-
-
- 
+            ; reseting background color to black
+            lda #0
+            sta COLUBK
 
             lda #%01000010
 
             sta VBLANK                     ; end of screen - enter blanking
-
-
 
                ; 30 scanlines of overscan...
 
