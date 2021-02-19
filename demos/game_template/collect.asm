@@ -37,12 +37,12 @@ VerticalSync:
         rts         ; ReTurn from Subroutine 
     
     
-    ;game logic can resides here
+        ;game logic can resides here
 VerticalBlank:
         rts             ; ReTurn from Subroutine
 
 
-    ; the 192 scanlines for the game
+        ; the 192 scanlines for the game
 Kernel:
         sta WSYNC       ; Wait for SYNC (halts CPU until end of scanline)
         lda INTIM       ; check the timer
