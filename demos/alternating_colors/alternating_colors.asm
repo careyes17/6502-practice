@@ -1,6 +1,6 @@
     processor 6502
-    include "../../lib/vcs.asm"
-    include "../../lib/macro.asm"
+    include "../../lib/vcs.h"
+    include "../../lib/macro.h"
 
     ; rom code start
     SEG
