@@ -1,3 +1,2 @@
 *.asm linguist-language=Assembly
 *.h linguist-language=Assembly
-*.sh linguist-language=Shell
