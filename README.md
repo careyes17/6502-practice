@@ -35,4 +35,4 @@ Here are the following steps you should take to contribute to this project:
 > This is a comprehensive, beginner friendly tutorial for 6502 Assembly Language Atari 2600 development.
 
 [Atari 2600 Game Development Tutorial Series](https://www.randomterrain.com/atari-2600-lets-make-a-game-spiceware-00.html)
-> This tutorial builds off of the of knowledge acquired from a [previously mentioned tutorial series](https://www.randomterrain.com/atari-2600-memories-tutorial-andrew-davie-01.html). In this tutorial series you can find best practices and pragmatic solutions to challenging Atari 2600 constraints.
+> This tutorial builds off of the knowledge acquired from a [previously mentioned tutorial series](https://www.randomterrain.com/atari-2600-memories-tutorial-andrew-davie-01.html). In this tutorial series you can find best practices and pragmatic solutions to challenging Atari 2600 constraints.
