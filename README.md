@@ -1,5 +1,5 @@
 # 6502-practice
-A collection of micro-projects dedicated to learning 6502 assembly language and its application in Atari 2600 game development. Many of these demos are based off of examples from a [6502 Assembly Language Atari 2600 tutorial series](https://www.randomterrain.com/atari-2600-memories-tutorial-andrew-davie-01.html) and some other resources from the **Reading Materials** section.
+A collection of micro-projects dedicated to learning 6502 assembly language and its application in Atari 2600 game development. Many of these demos are based off of examples from a [6502 Assembly Language Atari 2600 tutorial series](https://www.randomterrain.com/atari-2600-memories-tutorial-andrew-davie-01.html) and some other resources from the **[Reading Material](#reading-material)** section.
 
 ## Usage
 
