@@ -3,22 +3,20 @@
     include "../../lib/vcs.asm"
     include "../../lib/macro.asm"
 
-; compiler pointer var declarations
-
+    ; compiler pointer var declarations
     SEG.U vars
     ORG $80
 
 SpriteXPosition ds 1
 
-; rom code 
-
+    ; rom code 
     SEG
     ORG $F000
 
 
 INIT
 
-; clearing ram and TIA
+    ; clearing ram and TIA
 Reset
     ldx #0 
     lda #0 
@@ -27,9 +25,9 @@ Clear
     inx 
     bne Clear
 
-;init values
+    ;init values
 
-    ;init stack
+    ; init stack
     ldx #$FF
     txs
 
@@ -48,8 +46,7 @@ Clear
     sta COLUP1
 
 
-
-StartOfFrame
+START
 
    ; Start of vertical blank processing
     lda #0
@@ -67,8 +64,7 @@ StartOfFrame
     sta VSYNC           
 
 
-; 37 scanlines of vertical blank...
-
+    ; 37 scanlines of vertical blank...
     ldx #0
 VerticalBlank
     sta WSYNC
@@ -77,77 +73,74 @@ VerticalBlank
     bne VerticalBlank
 
 
-; Do 192 scanlines of color-changing (our picture)
-; 8 (top) + 176 (middle) + 8 (bottom) = 192 lines
- 
-                ldx #0 ; 192 scanlines of picture counter
+    ; Do 192 scanlines of color-changing (our picture)
+    ; 8 (top) + 176 (middle) + 8 (bottom) = 192 lines
 
-                ; setting playfield values
-                lda #%11111111
-                sta PF0
-                sta PF1
-                sta PF2
+    ldx #0 ; 192 scanlines of picture counter
+
+    ; setting playfield values
+    lda #%11111111
+    sta PF0
+    sta PF1
+    sta PF2
 Top8Lines
-                sta WSYNC
-                stx COLUBK
-                inx
-                cpx #8
-                bne Top8Lines
+    sta WSYNC
+    stx COLUBK
+    inx
+    cpx #8
+    bne Top8Lines
 
 
-; middle scanlines
-                lda #$45
-                sta COLUBK
+    ; middle scanlines
+    lda #$45
+    sta COLUBK
 
-                ; sprite position alteration
-                inc SpriteXPosition
-                ldx SpriteXPosition
-                cpx #160
-                bcc LT160
-                ldx #0
-                stx SpriteXPosition
+    ; sprite position alteration
+    inc SpriteXPosition
+    ldx SpriteXPosition
+    cpx #160
+    bcc LT160
+    ldx #0
+    stx SpriteXPosition
 LT160
-                jsr PositionSprite
+    jsr PositionSprite
+    sta WSYNC
 
-                sta WSYNC
-                ; middle scanline border calculation
-                lda #%00010000 ; PF0 is mirrored <--- direction, low 4 bits ignored
-                sta PF0
-                lda #0
-                sta PF1
-                sta PF2
+    ; middle scanline border calculation
+    lda #%00010000 ; PF0 is mirrored <--- direction, low 4 bits ignored
+    sta PF0
+    lda #0
+    sta PF1
+    sta PF2
 MiddleLines     
-                ; draw two sprites on the playfield
-                stx GRP0 ; modify sprite 0 shape
-                stx GRP1 ; modify sprite 1 shape
+    ; draw two sprites on the playfield
+    stx GRP0 ; modify sprite 0 shape
+    stx GRP1 ; modify sprite 1 shape
 
-                sta WSYNC
-                stx COLUBK
+    sta WSYNC
+    stx COLUBK
 
-                inx
-                cpx #184
-                bne MiddleLines
-
-
+    inx
+    cpx #184
+    bne MiddleLines
 
 
-                ; sprite cleanup
-                lda #0
-                sta GRP0 ; modify sprite 0 shape
-                sta GRP1 ; modify sprite 1 shape
+    ; sprite cleanup
+    lda #0
+    sta GRP0 ; modify sprite 0 shape
+    sta GRP1 ; modify sprite 1 shape
 
-; bottom 8 scanlines
-                lda #%11111111
-                sta PF0
-                sta PF1
-                sta PF2
+    ; bottom 8 scanlines
+    lda #%11111111
+    sta PF0
+    sta PF1
+    sta PF2
 Bottom8Lines
-                sta WSYNC
-                stx COLUBK
-                inx
-                cpx #192
-                bne Bottom8Lines
-
+    sta WSYNC
+    stx COLUBK
+    inx
+    cpx #192
+    bne Bottom8Lines
 
 
     ; reset background color to black
@@ -161,14 +154,12 @@ Bottom8Lines
     sta PF2
 
 
-
     ; Overscan blanking
     lda #%01000010
-    sta VBLANK          ; end of screen - enter blanking
+    sta VBLANK ; end of screen - enter blanking
 
 
    ; 30 scanlines of overscan...
-
     ldx #0
 Overscan        
     sta WSYNC
@@ -176,10 +167,10 @@ Overscan
     cpx #30
     bne Overscan
 
-    jmp StartOfFrame
+    jmp START
 
 
-; rough sprite positioning
+    ; rough sprite positioning
 Divide15
 .POS	SET 0
 	REPEAT 256
@@ -199,8 +190,7 @@ SimpleLoop
     sta RESP0			; start drawing the sprite
     rts
 
-;interupt vectors
-
+    ;interupt vectors
     ORG $FFFA
 InterruptVectors
     .word Reset          ; NMI
