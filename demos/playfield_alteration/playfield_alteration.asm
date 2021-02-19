@@ -48,7 +48,7 @@ Clear
 
 StartOfFrame
 
-   ; Start of vertical blank processing
+    ; Start of vertical blank processing
     lda #0
     sta VBLANK
 
@@ -64,8 +64,7 @@ StartOfFrame
     sta VSYNC           
 
 
-; 37 scanlines of vertical blank...
-
+    ; 37 scanlines of vertical blank...
     ldx #0
 VerticalBlank
     sta WSYNC
