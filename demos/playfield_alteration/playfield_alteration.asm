@@ -46,7 +46,7 @@ Clear
 
 
 
-StartOfFrame
+START
 
     ; Start of vertical blank processing
     lda #0
@@ -119,7 +119,7 @@ Overscan
     cpx #30
     bne Overscan
 
-    jmp StartOfFrame
+    jmp START
 
 
     ;interupt vectors
