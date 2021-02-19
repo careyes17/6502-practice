@@ -3,21 +3,19 @@
     include "../../lib/vcs.asm"
     include "../../lib/macro.asm"
 
-
-
-
+    ; vars
 PATTERN         = $80                  ; storage location (1st byte in RAM)
 TIMETOCHANGE    = 20                   ; speed of "animation" - change as desired
 
 
-
+    ; rom code start
     SEG
     ORG $F000
 
 
 INIT
 
-; clearing ram and TIA
+    ; clearing ram and TIA
 Reset
     ldx #0 
     lda #0 
@@ -29,13 +27,18 @@ Clear
 
 
     ; init values
+
+    ; init stack
+    ldx #$FF
+    txs
+
     lda #0
-    sta PATTERN            ; The binary PF 'pattern'
+    sta PATTERN ; The binary PF 'pattern'
 
     lda #$45
-    sta COLUPF             ; set the playfield color
+    sta COLUPF ; set the playfield color
 
-    ldy #0                 ; "speed" counter
+    ldy #0 ; "speed" counter
 
     ; set playfield reflected across y-axis, using D0 = 1
     lda #%00000001
@@ -49,18 +52,13 @@ StartOfFrame
     lda #0
     sta VBLANK
 
-
-
     lda #2
     sta VSYNC
 
-
-
+    ; 3 scanlines of VSYNC signal
     sta WSYNC
     sta WSYNC
-    sta WSYNC               ; 3 scanlines of VSYNC signal
-
-
+    sta WSYNC
 
     lda #0
     sta VSYNC           
@@ -69,7 +67,6 @@ StartOfFrame
 ; 37 scanlines of vertical blank...
 
     ldx #0
-
 VerticalBlank
     sta WSYNC
     inx
@@ -78,33 +75,28 @@ VerticalBlank
 
 
 IteratePattern
-        ; Handle a change in the pattern once every 20 frames
-        ; and write the pattern to the PF1 register
+    ; Handle a change in the pattern once every 20 frames
+    ; and write the pattern to the PF1 register
+    iny ; increment speed count by one
+    cpy #TIMETOCHANGE
+    bne notyet ; no, so branch past
 
-                iny                    ; increment speed count by one
-                cpy #TIMETOCHANGE      ; has it reached our "change point"?
-                bne notyet             ; no, so branch past
-
-                ldy #0                 ; reset speed count
-                inc PATTERN            ; switch to next pattern
-
+    ldy #0 ; reset speed count
+    inc PATTERN ; switch to next pattern
 notyet
-
-                lda PATTERN            ; use our saved pattern
-
+    lda PATTERN ; use saved pattern
 
 
-; Do 192 scanlines of color-changing (our picture)
- 
+
+    ; Do 192 scanlines of color-changing (our picture)
     ldx #192 ; 192 scanlines of picture...
 
 scanlines
     sta WSYNC
     sta PF1 ; start displaying playfield shape
-    stx COLUBK             ; change background color (rainbow effect)
+    stx COLUBK ; change background color (rainbow effect)
     dex
     bne scanlines
-
 
     ; reset background color to black
     ldx #0
@@ -115,30 +107,26 @@ scanlines
     sta PF1
 
 
-; Overscan blanking
-                lda #%01000010
-                sta VBLANK          ; end of screen - enter blanking
-
+    ; Overscan blanking
+    lda #%01000010
+    sta VBLANK ; end of screen - enter blanking
 
 
    ; 30 scanlines of overscan...
-
-
-
-                ldx #0
+    ldx #0
 Overscan        
-                sta WSYNC
-                inx
-                cpx #30
-                bne Overscan
+    sta WSYNC
+    inx
+    cpx #30
+    bne Overscan
 
-                jmp StartOfFrame
-
-            ORG $FFFA
+    jmp StartOfFrame
 
 
+    ;interupt vectors
+    ORG $FFFA
 InterruptVectors
-            .word Reset          ; NMI
-            .word Reset          ; RESET
-            .word Reset          ; IRQ
+    .word Reset ; NMI
+    .word Reset ; RESET
+    .word Reset ; IRQ
 END
