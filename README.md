@@ -6,13 +6,14 @@ A collection of micro-projects dedicated to learning 6502 assembly language and 
 ### Compile and Use Binaries
 
 1. Install the [DASM](https://dasm-assembler.github.io/) assembler in order to compile the `.asm` source files
-2. Enter one of the project directories
-3. Perform the command:
+2. Copy the `vcs.h` and `macro.h` files that come with DASM for the Atari 2600 into the `lib` directory
+3. Enter one of the project directories
+4. Perform the command:
 
     `$ sh compile.sh`
 
-4. Enter the bin folder that was created
-5. Use the `.bin` file in your Atari 2600 emulator of choice
+5. Enter the bin folder that was created
+6. Use the `.bin` file in your Atari 2600 emulator of choice
 
 ## Contributing
 If you have any changes in mind or improvements that you would like to see, feel free to contribute to this project.
